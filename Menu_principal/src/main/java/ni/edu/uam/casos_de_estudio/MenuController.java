@@ -25,7 +25,7 @@ public class MenuController {
         abrir(new ReservaApplication());
     }
 
-    // Abre la aplicacion en una ventana nueva; el menu sigue abierto
+
     private void abrir(Application app) {
         try {
             app.start(new Stage());
