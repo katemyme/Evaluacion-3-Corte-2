@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Caso 3 - Caja de ventas" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="ni.edu.uam.caja_de_ventas.Launcher" />
+    <module name="Caja_de_ventas" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
