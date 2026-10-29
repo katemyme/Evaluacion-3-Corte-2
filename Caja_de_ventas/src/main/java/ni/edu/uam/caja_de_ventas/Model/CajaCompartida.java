@@ -6,8 +6,10 @@ public class CajaCompartida {
     private int totalVentas = 0;
     private int recaudacionTotal = 0;
 
+    // Copia de los totales leída en un mismo momento, para mostrarlos juntos en la interfaz.
     public record EstadoCaja(int totalVentas, int recaudacionTotal, String detalleVenta) {}
 
+    // Registra una venta completa. synchronized permite que solo un vendedor a la vez modifique ventas y recaudación.
     public synchronized EstadoCaja registrarVenta(String nombreVendedor, int numeroVentaVendedor) {
         totalVentas++;
         recaudacionTotal += MONTO_VENTA;
@@ -17,10 +19,12 @@ public class CajaCompartida {
     }
 
 
+    // Lee ventas y recaudación juntas, sin que otro vendedor las cambie a mitad de la lectura.
     public synchronized EstadoCaja obtenerEstadoActual() {
         return new EstadoCaja(totalVentas, recaudacionTotal, "");
     }
 
+    // Restablece los totales antes de una nueva simulación.
     public synchronized void reiniciar() {
         totalVentas = 0;
         recaudacionTotal = 0;

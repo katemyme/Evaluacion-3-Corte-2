@@ -13,6 +13,6 @@
 
     <Label text="Casos de estudio" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
     <Button text="Caja de ventas" prefWidth="200.0" onAction="#onCajaButtonClick"/>
-    <Button text="Registro de pedidos" prefWidth="200.0" onAction="#onRegistroButtonClick"/>
+    <Button text="Procesamiento de pedidos" prefWidth="200.0" onAction="#onRegistroButtonClick"/>
     <Button text="Reserva concurrente" prefWidth="200.0" onAction="#onReservaButtonClick"/>
 </VBox>

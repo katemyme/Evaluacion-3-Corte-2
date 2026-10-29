@@ -10,6 +10,7 @@ import java.io.IOException;
 
 public class CajaVentasApplication extends Application {
 
+    // Carga la vista, conecta el cierre seguro con el controlador y muestra la ventana.
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(CajaVentasApplication.class.getResource("/ni/edu/uam/caja_de_ventas/caja-ventas-view.fxml"));
@@ -24,6 +25,7 @@ public class CajaVentasApplication extends Application {
         stage.show();
     }
 
+    // Permite ejecutar este caso directamente, sin pasar por el menú.
     public static void main(String[] args) {
         launch();
     }
