@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="ni.edu.uam.procesamiento_de_pedidos.PedidosController"
+      prefWidth="800" prefHeight="520" spacing="15">
+
+    <padding>
+        <Insets top="25" right="25" bottom="25" left="25"/>
+    </padding>
+
+    <!-- Encabezado -->
+    <Label text="Procesamiento de pedidos"
+           style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+
+    <Label text="Simulación de 30 pedidos con una duración de 200 ms cada uno."/>
+
+    <!-- Botones de control -->
+    <HBox spacing="10">
+        <Button fx:id="btnIniciar"
+                text="Iniciar"
+                prefWidth="120"
+                onAction="#iniciarProcesamiento"/>
+
+        <Button fx:id="btnCancelar"
+                text="Cancelar"
+                prefWidth="120"
+                disable="true"
+                onAction="#cancelarProcesamiento"/>
+    </HBox>
+
+    <!-- Barra de progreso -->
+    <Label text="Progreso del procesamiento"/>
+
+    <ProgressBar fx:id="barraProgreso"
+                 progress="0"
+                 maxWidth="Infinity"/>
+
+    <!-- Contador y estado -->
+    <HBox spacing="10">
+        <Label text="Pedidos completados:"/>
+        <Label fx:id="lblContador" text="0 / 30"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Label text="Estado:"/>
+        <Label fx:id="lblEstado" text="Listo"
+               style="-fx-font-weight: bold;"/>
+    </HBox>
+
+    <Separator/>
+
+    <!-- Registro de operaciones -->
+    <Label text="Registro de procesamiento"
+           style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+
+    <TextArea fx:id="txtRegistro"
+              editable="false"
+              wrapText="true"
+              VBox.vgrow="ALWAYS"/>
+
+</VBox>
