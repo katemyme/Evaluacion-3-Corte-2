@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="580.0" prefWidth="680.0" style="-fx-background-color: #f8fafc;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ni.edu.uam.caja_de_ventas.CajaVentasController">
+<BorderPane prefHeight="580.0" prefWidth="680.0" style="-fx-background-color: #f8fafc;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ni.edu.uam.caja_de_ventas.Controller.CajaVentasController">
 
   <!-- ENCABEZADO -->
   <top>
