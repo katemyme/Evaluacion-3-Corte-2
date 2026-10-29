@@ -1,4 +1,4 @@
-package ni.edu.uam.caja_de_ventas;
+package ni.edu.uam.caja_de_ventas.Application;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
