@@ -1,72 +1,43 @@
-# Caso 2: procesamiento de pedidos
+# Caso 2: procesamiento de pedidos con cancelación
 
-Simula 30 pedidos de 200 ms en un trabajador separado de JavaFX. Requiere JDK 21;
-el proyecto utiliza JavaFX 21.0.6 y el Maven Wrapper del repositorio.
+Simula 30 pedidos de 200 ms en un hilo trabajador separado del hilo de JavaFX. Requiere JDK 21 y JavaFX 21.0.6.
 
-## Ejecución y verificaciones
+## Ejecución
 
-Desde la raíz del repositorio, configura `JAVA_HOME` con la carpeta de tu JDK 21:
+Desde IntelliJ IDEA, con la carpeta raíz del repositorio abierta, elegir la configuración **Caso 2 - Procesamiento de pedidos** (o **Menu principal** › *Procesamiento de pedidos*) y pulsar **Run**. Las instrucciones completas están en el [README principal](../README.md).
 
-```powershell
-.\mvnw.cmd -B verify
-.\mvnw.cmd javafx:run
-```
+**Iniciar** comienza una ejecución nueva y **Cancelar** pide al trabajador que se detenga.
 
-En el menú, selecciona **Registro de pedidos**. **Iniciar** comienza un ciclo;
-**Cancelar** interrumpe cooperativamente el procesamiento. Un nuevo inicio
-restablece contador, progreso y registro cuando el trabajador anterior ya terminó.
+## Clases
 
-Las cinco pruebas de `ProcesadorPedidosTest` se ejecutan con `verify`.
-Las nueve pruebas de `PedidosControllerTest` necesitan un escritorio gráfico:
+| Clase | Responsabilidad |
+| --- | --- |
+| `PedidosApplication` | Carga `pedidos-view.fxml` y conecta el cierre de la ventana con el controlador. |
+| `PedidosController` | Botones, contador, barra de progreso, estados y registro. Crea el hilo trabajador y el hilo vigilante. |
+| `ProcesadorPedidos` | `Runnable` con el ciclo de los 30 pedidos; avisa al controlador cada vez que termina uno. |
 
-```powershell
-.\mvnw.cmd -B verify -DpruebasJavafx=true
-```
-
-Sin esa propiedad, JUnit informa las pruebas JavaFX como omitidas. Con ella, se
-abren ventanas reales y se prueban el FXML y los controles, sin TestFX ni mocks.
-Los resultados de cada ejecución quedan en `Procesamiento_de_pedidos/target/surefire-reports/`;
-son archivos generados y no deben incluirse en Git.
-
-## Estados y concurrencia
+## Estados
 
 | Estado | Significado |
 | --- | --- |
-| Listo | Todavía no se ha iniciado un ciclo. |
-| En ejecución | Un trabajador procesa los pedidos. |
-| Cancelando | Se solicitó interrupción; aún falta confirmar la terminación. |
-| Cancelado | El trabajador terminó con menos de 30 pedidos tras cancelar. |
-| Completado | Se completaron los 30 pedidos, incluso si llegó una cancelación tardía. |
-| Error | Ocurrió un fallo o el trabajador terminó inesperadamente. |
+| Listo | Todavía no se ha iniciado un procesamiento. |
+| En ejecución | El trabajador está procesando pedidos. |
+| Cancelando | Se pidió cancelar y se espera que el trabajador termine. |
+| Cancelado | El trabajador terminó después de cancelar, con menos de 30 pedidos. |
+| Completado | Se procesaron los 30 pedidos (también si la cancelación llegó después del último). |
+| Error | El trabajador terminó antes de tiempo sin que se pidiera cancelar. |
 
-`interrupt()` despierta al trabajador si está en `sleep(200)`; también se
-comprueba la interrupción entre pedidos. Solo se cuentan pedidos completos.
-El contador compartido usa `AtomicInteger`, y la solicitud de cancelación y el
-error usan `volatile` para que sean visibles entre hilos.
+## Cómo funciona la concurrencia
 
-Los controles solo cambian desde JavaFX. Los avisos de cada pedido se encolan con
-`Platform.runLater`; un vigilante espera con `join()` fuera del hilo de interfaz
-y después encola la finalización. Así, los avisos anteriores se aplican antes de
-habilitar otro ciclo. La referencia al trabajador impide inicios duplicados
-incluso si ya murió pero todavía está pendiente su aviso final.
+- **Hilo trabajador:** cada ejecución crea un `Thread` nuevo con `ProcesadorPedidos`, porque un hilo terminado no puede volver a iniciarse.
+- **Cancelación cooperativa:** Cancelar llama a `interrupt()`. El trabajador revisa `isInterrupted()` antes de cada pedido, y si la interrupción llega durante `sleep(200)` se lanza `InterruptedException`. El pedido en curso no se cuenta. No se usa `Thread.stop()`.
+- **Hilo vigilante:** espera al trabajador con `join()`. Se usa otro hilo porque `join()` en el hilo de JavaFX congelaría la ventana. Al terminar, usa `Platform.runLater()` para mostrar el resultado y habilitar otra ejecución.
+- **Interfaz segura:** el contador y los controles solo se modifican dentro de `Platform.runLater()`, es decir, en el hilo de JavaFX. Por eso no hacen falta `AtomicInteger` ni `volatile`.
+- **Cierre:** si hay un procesamiento activo, el cierre se consume, se cancela y la ventana se cierra cuando el vigilante confirma que el trabajador terminó.
 
-El filtro de cierre se instala antes de mostrar la ventana. Si hay un ciclo,
-consume el evento, pide cancelar y cierra únicamente después del `join()`.
-Las alertas de error usan `show()` para no introducir un bucle de eventos anidado
-durante la liberación del trabajador.
+## Pruebas automáticas
 
-## Escenarios de aceptación
+- `ProcesadorPedidosTest` (4 pruebas): orden y duración de los pedidos, interrupción antes de empezar, durante la espera y entre pedidos.
+- `PedidosControllerTest` (9 pruebas): abre ventanas JavaFX reales; solo se ejecuta con la propiedad `-DpruebasJavafx=true` (en IntelliJ, en las opciones de VM de la configuración de prueba).
 
-- Inicio: `Listo`, `0 / 30`, progreso cero y Cancelar deshabilitado.
-- Ejecución completa: 30 avisos ordenados, `30 / 30`, progreso 100 % y `Completado`.
-- Cancelación inmediata y parcial: `Cancelando` seguido de `Cancelado`, conservando
-  contador y progreso de los pedidos terminados.
-- Inicio repetido y reinicio durante cancelación: no crean otro trabajador.
-- Reinicio tras completar o cancelar: contador, progreso y registro parten de cero.
-- Cancelación después del pedido 30, antes de actualizar la interfaz: `Completado`.
-- Interrupción inesperada: `Error`, sin dejar controles bloqueados por la alerta.
-- Cierre sin iniciar, durante la ejecución e inmediatamente al abrir: cierre seguro.
-
-Estas pruebas verifican el comportamiento técnico del caso 2. No sustituyen la
-rúbrica oficial, la documentación de aportes de los integrantes ni la demostración
-académica que se solicite para la entrega.
+Las pruebas complementan la verificación manual documentada en `informes/Informe_Caso2_Procesamiento_de_Pedidos`.
