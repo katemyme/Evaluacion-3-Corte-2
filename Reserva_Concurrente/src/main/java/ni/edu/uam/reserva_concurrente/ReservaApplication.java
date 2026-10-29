@@ -11,7 +11,7 @@ public class ReservaApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(ReservaApplication.class.getResource("reserva-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
+        Scene scene = new Scene(fxmlLoader.load(), 800, 450);
         stage.setTitle("Reserva concurrente");
         stage.setScene(scene);
         stage.show();

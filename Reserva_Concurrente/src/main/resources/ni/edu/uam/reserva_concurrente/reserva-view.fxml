@@ -1,16 +1,266 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="ni.edu.uam.reserva_concurrente.ReservaController">
-  <padding>
-    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-  </padding>
-
-  <Label fx:id="welcomeText"/>
-  <Button text="Saludar" onAction="#onSaludarButtonClick"/>
-</VBox>
+<BorderPane fx:id="raiz" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="800.0" styleClass="ventana" stylesheets="@claro.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ni.edu.uam.reserva_concurrente.controller.ReservaController">
+   <top>
+      <HBox alignment="CENTER_LEFT" prefWidth="800.0" spacing="20.0" styleClass="barra" BorderPane.alignment="CENTER_LEFT">
+         <children>
+            <Label styleClass="titulo" text="Reserva de Entradas">
+               <font>
+                  <Font name="Times New Roman Bold" size="18.0" />
+               </font>
+            </Label>
+            <HBox alignment="CENTER_RIGHT" prefWidth="200.0" spacing="15.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label fx:id="lblEstado" styleClass="estado" text="Estado: Lista">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </Label>
+                  <ToggleButton fx:id="tglTema" mnemonicParsing="false" onAction="#cambiarTema" styleClass="boton-tema" text="Modo oscuro">
+                     <font>
+                        <Font name="Times New Roman Bold" size="14.0" />
+                     </font>
+                  </ToggleButton>
+               </children>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </HBox>
+   </top>
+   <center>
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="757.0" spacing="20.0">
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+         <children>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+               <children>
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="150.0" spacing="5.0">
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                     <children>
+                        <Label styleClass="tarjeta-titulo" text="Disponibles">
+                           <font>
+                              <Font name="Times New Roman" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblDisponibles" styleClass="tarjeta-numero" text="20">
+                           <font>
+                              <Font name="Times New Roman Bold" size="24.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <styleClass>
+                        <String fx:value="tarjeta" />
+                        <String fx:value="tarjeta-disponibles" />
+                     </styleClass>
+                  </VBox>
+                  <VBox alignment="CENTER" layoutX="324.0" layoutY="10.0" prefHeight="200.0" prefWidth="150.0" spacing="5.0">
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                     <children>
+                        <Label styleClass="tarjeta-titulo" text="Confirmadas">
+                           <font>
+                              <Font name="Times New Roman" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblConfirmadas" styleClass="tarjeta-numero" text="0">
+                           <font>
+                              <Font name="Times New Roman Bold" size="24.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <styleClass>
+                        <String fx:value="tarjeta" />
+                        <String fx:value="tarjeta-confirmadas" />
+                     </styleClass>
+                  </VBox>
+                  <VBox alignment="CENTER" layoutX="410.0" layoutY="10.0" prefHeight="200.0" prefWidth="150.0" spacing="5.0">
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                     <children>
+                        <Label styleClass="tarjeta-titulo" text="Rechazadas">
+                           <font>
+                              <Font name="Times New Roman" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblRechazadas" styleClass="tarjeta-numero" text="0">
+                           <font>
+                              <Font name="Times New Roman Bold" size="24.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <styleClass>
+                        <String fx:value="tarjeta" />
+                        <String fx:value="tarjeta-rechazadas" />
+                     </styleClass>
+                  </VBox>
+               </children></HBox>
+            <Separator prefWidth="200.0" styleClass="separador" />
+            <GridPane alignment="CENTER" hgap="15.0" styleClass="tabla" vgap="10.0">
+              <columnConstraints>
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="160.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+               <children>
+                  <Label styleClass="encabezado" text="Intentos" GridPane.columnIndex="1">
+                     <font>
+                        <Font name="Times New Roman Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label styleClass="agente-1" text="Agente 1" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label styleClass="agente-2" text="Agente 2" GridPane.rowIndex="2">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label styleClass="agente-3" text="Agente 3" GridPane.rowIndex="3">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblIntentosA1" styleClass="celda" text="0/10" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblIntentosA2" styleClass="celda" text="0/10" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblIntentosA3" styleClass="celda" text="0/10" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label styleClass="encabezado" text="Confirmadas" GridPane.columnIndex="2">
+                     <font>
+                        <Font name="Times New Roman Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label styleClass="encabezado" text="Rechazadas" GridPane.columnIndex="3">
+                     <font>
+                        <Font name="Times New Roman Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label styleClass="encabezado" text="Progreso" GridPane.columnIndex="4">
+                     <font>
+                        <Font name="Times New Roman Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label styleClass="encabezado" text="Estado" GridPane.columnIndex="5">
+                     <font>
+                        <Font name="Times New Roman Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblConfirmadasA1" styleClass="celda" text="0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblConfirmadasA2" styleClass="celda" text="0" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblConfirmadasA3" styleClass="celda" text="0" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblRechazadasA1" styleClass="celda" text="0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblRechazadasA2" styleClass="celda" text="0" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblRechazadasA3" styleClass="celda" text="0" GridPane.columnIndex="3" GridPane.rowIndex="3">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblEstadoA1" styleClass="celda" text="En espera" GridPane.columnIndex="5" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblEstadoA2" styleClass="celda" text="En espera" GridPane.columnIndex="5" GridPane.rowIndex="2">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblEstadoA3" styleClass="celda" text="En espera" GridPane.columnIndex="5" GridPane.rowIndex="3">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </Label>
+                  <ProgressBar fx:id="prgA1" prefWidth="150.0" progress="0.0" styleClass="agente-1" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                  <ProgressBar fx:id="prgA2" prefWidth="150.0" progress="0.0" styleClass="agente-2" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+                  <ProgressBar fx:id="prgA3" prefWidth="150.0" progress="0.0" styleClass="agente-3" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+                  <Label styleClass="encabezado" text="Agentes">
+                     <font>
+                        <Font name="Times New Roman Bold" size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </GridPane>
+         </children>
+      </VBox>
+   </center>
+   <bottom>
+      <VBox alignment="CENTER" prefWidth="100.0" spacing="8.0" BorderPane.alignment="CENTER">
+         <children>
+            <Separator prefWidth="200.0" styleClass="separador" />
+            <HBox alignment="CENTER" prefWidth="200.0" spacing="15.0">
+               <children>
+                  <Button fx:id="btnIniciar" mnemonicParsing="false" onAction="#iniciarSimulacion" prefWidth="160.0" styleClass="boton-iniciar" text="Iniciar Simulación">
+                     <font>
+                        <Font name="Times New Roman Bold" size="14.0" />
+                     </font></Button>
+                  <Button fx:id="btnNuevaSimulacion" disable="true" mnemonicParsing="false" onAction="#iniciarNuevaSimulacion" prefWidth="160.0" styleClass="boton-nueva" text="Nueva Simulación">
+                     <font>
+                        <Font name="Times New Roman Bold" size="14.0" />
+                     </font></Button>
+               </children>
+            </HBox>
+            <Label fx:id="lblMensaje" styleClass="mensaje" textFill="#610909" />
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </VBox>
+   </bottom>
+</BorderPane>
