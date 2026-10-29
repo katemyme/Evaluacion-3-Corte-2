@@ -40,4 +40,4 @@ Desde IntelliJ IDEA, con la carpeta raíz del repositorio abierta, elegir la con
 - `ProcesadorPedidosTest` (4 pruebas): orden y duración de los pedidos, interrupción antes de empezar, durante la espera y entre pedidos.
 - `PedidosControllerTest` (9 pruebas): abre ventanas JavaFX reales; solo se ejecuta con la propiedad `-DpruebasJavafx=true` (en IntelliJ, en las opciones de VM de la configuración de prueba).
 
-Las pruebas complementan la verificación manual documentada en `informes/Informe_Caso2_Procesamiento_de_Pedidos`.
+Las pruebas complementan la verificación manual documentada en `informes/Informe_Caso2_Procesamiento_de_Pedidos.pdf`.
