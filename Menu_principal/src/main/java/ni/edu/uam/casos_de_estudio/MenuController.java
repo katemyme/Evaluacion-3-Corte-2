@@ -4,7 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
-import ni.edu.uam.caja_de_ventas.CajaVentasApplication;
+import ni.edu.uam.caja_de_ventas.Application.CajaVentasApplication;
 import ni.edu.uam.procesamiento_de_pedidos.PedidosApplication;
 import ni.edu.uam.reserva_concurrente.ReservaApplication;
 
@@ -25,7 +25,7 @@ public class MenuController {
         abrir(new ReservaApplication());
     }
 
-    // Abre la aplicacion en una ventana nueva; el menu sigue abierto
+
     private void abrir(Application app) {
         try {
             app.start(new Stage());
