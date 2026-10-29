@@ -1,0 +1,162 @@
+/* =========================================================
+   MODO OSCURO - Paleta "Noche de evento"
+   Ambos archivos (claro.css y oscuro.css) usan las mismas
+   clases; lo único que cambia son los colores.
+   ========================================================= */
+
+/* ---------- Ventana ---------- */
+.ventana {
+    -fx-background-color: #0F172A;
+}
+
+/* ---------- Barra superior ---------- */
+.barra {
+    -fx-background-color: #1E293B;
+}
+
+.titulo {
+    -fx-text-fill: #F8FAFC;
+}
+
+.estado {
+    -fx-text-fill: #94A3B8;
+}
+
+/* ---------- Botón de tema ---------- */
+.boton-tema,
+.boton-tema:selected {
+    -fx-background-color: #334155;
+    -fx-text-fill: #F8FAFC;
+    -fx-background-insets: 0;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+
+.boton-tema:hover {
+    -fx-background-color: #475569;
+}
+
+/* ---------- Tarjetas de contadores ---------- */
+.tarjeta {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-width: 2;
+}
+
+.tarjeta-disponibles {
+    -fx-background-color: #1E293B;
+    -fx-border-color: #38BDF8;
+}
+
+.tarjeta-confirmadas {
+    -fx-background-color: #1E293B;
+    -fx-border-color: #4ADE80;
+}
+
+.tarjeta-rechazadas {
+    -fx-background-color: #1E293B;
+    -fx-border-color: #F87171;
+}
+
+.tarjeta-titulo {
+    -fx-text-fill: #CBD5E1;
+}
+
+.tarjeta-disponibles .tarjeta-numero {
+    -fx-text-fill: #38BDF8;
+}
+
+.tarjeta-confirmadas .tarjeta-numero {
+    -fx-text-fill: #4ADE80;
+}
+
+.tarjeta-rechazadas .tarjeta-numero {
+    -fx-text-fill: #F87171;
+}
+
+/* ---------- Separadores ---------- */
+.separador .line {
+    -fx-border-color: #334155 transparent transparent transparent;
+    -fx-border-insets: 0;
+}
+
+/* ---------- Tabla de agentes ---------- */
+.tabla {
+    -fx-background-color: #1E293B;
+    -fx-background-radius: 10;
+}
+
+.encabezado {
+    -fx-text-fill: #38BDF8;
+}
+
+.celda {
+    -fx-text-fill: #E2E8F0;
+}
+
+/* ---------- Color de cada agente (nombre y barra) ---------- */
+.label.agente-1 {
+    -fx-text-fill: #38BDF8;
+}
+
+.label.agente-2 {
+    -fx-text-fill: #A78BFA;
+}
+
+.label.agente-3 {
+    -fx-text-fill: #FB923C;
+}
+
+.progress-bar.agente-1 {
+    -fx-accent: #38BDF8;
+}
+
+.progress-bar.agente-2 {
+    -fx-accent: #A78BFA;
+}
+
+.progress-bar.agente-3 {
+    -fx-accent: #FB923C;
+}
+
+.progress-bar > .track {
+    -fx-background-color: #334155;
+    -fx-background-insets: 0;
+    -fx-background-radius: 4;
+}
+
+.progress-bar > .bar {
+    -fx-background-color: -fx-accent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 4;
+}
+
+/* ---------- Botones ---------- */
+.boton-iniciar {
+    -fx-background-color: #0EA5E9;
+    -fx-text-fill: #0F172A;
+    -fx-background-insets: 0;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+
+.boton-iniciar:hover {
+    -fx-background-color: #38BDF8;
+}
+
+.boton-nueva {
+    -fx-background-color: #22C55E;
+    -fx-text-fill: #0F172A;
+    -fx-background-insets: 0;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+
+.boton-nueva:hover {
+    -fx-background-color: #4ADE80;
+}
+
+/* ---------- Mensajes ---------- */
+.mensaje {
+    -fx-text-fill: #FCA5A5;
+}
