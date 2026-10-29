@@ -1,0 +1,10 @@
+[Caja de ventas] Simulación #1 -> Verificación: 15 ventas x C$100 = C$1,500 (suma por vendedor: 15) -> CONSISTENTE
+[Caja de ventas] Simulación #2 -> Verificación: 15 ventas x C$100 = C$1,500 (suma por vendedor: 15) -> CONSISTENTE
+[Caja de ventas] Simulación #3 -> Verificación: 15 ventas x C$100 = C$1,500 (suma por vendedor: 15) -> CONSISTENTE
+[Caja de ventas] Simulación #4 -> Verificación: 15 ventas x C$100 = C$1,500 (suma por vendedor: 15) -> CONSISTENTE
+[Caja de ventas] Simulación #5 -> Verificación: 15 ventas x C$100 = C$1,500 (suma por vendedor: 15) -> CONSISTENTE
+[Caja de ventas] Simulación #6 -> Verificación: 11 ventas x C$100 = C$1,100 (suma por vendedor: 11) -> CONSISTENTE
+[Caja de ventas] Simulación #7 -> Verificación: 15 ventas x C$100 = C$1,500 (suma por vendedor: 15) -> CONSISTENTE
+[Caja de ventas] Simulación #8 -> Verificación: 9 ventas x C$100 = C$900 (suma por vendedor: 9) -> CONSISTENTE
+[Caja de ventas] Ventana cerrada con 3/3 trabajadores terminados (executor terminado: true).
+EXIT_CODE=0
