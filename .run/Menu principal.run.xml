@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Menu principal" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="ni.edu.uam.casos_de_estudio.Launcher" />
+    <module name="Menu_principal" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

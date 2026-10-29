@@ -68,6 +68,7 @@ public class CajaVentasController {
     private boolean cerrarAlTerminar = false;
     private int numeroSimulacion = 0;
 
+    // Deja los botones y la bitácora en su estado inicial al cargar el FXML.
     @FXML
     public void initialize() {
         btnIniciar.setDisable(false);
@@ -75,6 +76,7 @@ public class CajaVentasController {
         agregarBitacora("Sistema listo. Presione 'Iniciar Simulación' para comenzar.");
     }
 
+    // Inicia una simulación nueva con tres vendedores y datos restablecidos.
     @FXML
     protected void onIniciarClick() {
         if (simulacionEnCurso) {
@@ -96,6 +98,7 @@ public class CajaVentasController {
         agregarBitacora("=== INICIANDO SIMULACIÓN #" + numeroSimulacion + " CON 3 VENDEDORES ===");
 
         AtomicInteger numeroHilo = new AtomicInteger(1);
+        // ExecutorService administra un grupo de 3 hilos, uno por vendedor. Son daemon para que no impidan cerrar el programa.
         executorService = Executors.newFixedThreadPool(TOTAL_VENDEDORES, r -> {
             Thread t = new Thread(r, "vendedor-" + numeroHilo.getAndIncrement());
             t.setDaemon(true);
@@ -108,15 +111,18 @@ public class CajaVentasController {
         tareasActivas.add(crearTareaVendedor("Vendedor 3", pbVendedor3, lblEstadoV3, lblVentasV3));
 
         tareasActivas.forEach(executorService::execute);
+        // shutdown() no detiene a los vendedores: solo indica que no se enviarán más tareas.
         executorService.shutdown();
         esperarTerminacionEnSegundoPlano(executorService);
     }
 
+    // Atiende el botón Cancelar.
     @FXML
     protected void onCancelarClick() {
         solicitarCancelacion();
     }
 
+    // Pide a los tres vendedores que se detengan; cancel(true) interrumpe su espera actual.
     private void solicitarCancelacion() {
         if (!simulacionEnCurso || cancelacionSolicitada) {
             return;
@@ -132,6 +138,7 @@ public class CajaVentasController {
         }
     }
 
+    // Crea la tarea de un vendedor y enlaza su barra y su estado con los controles de la ventana.
     private ProcesadorVentasTask crearTareaVendedor(String nombre, ProgressBar pb, Label lblEstado, Label lblVentas) {
         pb.progressProperty().unbind();
         lblEstado.textProperty().unbind();
@@ -141,6 +148,7 @@ public class CajaVentasController {
                 nombre,
                 VENTAS_POR_VENDEDOR,
                 cajaCompartida,
+                // Estas acciones las ejecuta el vendedor desde su hilo; Platform.runLater pasa la actualización al hilo de JavaFX.
                 estadoCaja -> Platform.runLater(() -> {
                     mostrarTotales(cajaCompartida.obtenerEstadoActual());
                     agregarBitacora(estadoCaja.detalleVenta());
@@ -172,6 +180,7 @@ public class CajaVentasController {
         supervisor.start();
     }
 
+    // Se ejecuta cuando los tres vendedores terminaron: muestra el resultado y habilita un nuevo inicio.
     private void finalizarSimulacion() {
         CajaCompartida.EstadoCaja estadoFinal = cajaCompartida.obtenerEstadoActual();
         mostrarTotales(estadoFinal);
@@ -215,6 +224,7 @@ public class CajaVentasController {
         }
     }
 
+    // Si hay vendedores activos, cancela y cierra la ventana solo cuando todos hayan terminado.
     public void cerrarLimpiamente(WindowEvent evento) {
         if (!simulacionEnCurso) {
             return;
@@ -227,16 +237,19 @@ public class CajaVentasController {
         agregarBitacora(">>> CIERRE DE VENTANA SOLICITADO. Se cerrará cuando terminen los 3 vendedores.");
     }
 
+    // Muestra el total de ventas y la recaudación de la caja.
     private void mostrarTotales(CajaCompartida.EstadoCaja estado) {
         lblTotalVentas.setText(estado.totalVentas() + " / " + VENTAS_ESPERADAS);
         lblRecaudacion.setText("C$ " + String.format("%,d", estado.recaudacionTotal()));
     }
 
+    // Cambia el texto y el color del estado general de la simulación.
     private void actualizarEstiloEstadoGeneral(String texto, String colorHex) {
         lblEstadoGeneral.setText(texto);
         lblEstadoGeneral.setStyle("-fx-text-fill: " + colorHex + "; -fx-font-weight: bold;");
     }
 
+    // Agrega un mensaje con la hora actual a la bitácora.
     private void agregarBitacora(String mensaje) {
         String linea = "[" + LocalTime.now().format(HORA_FMT) + "] " + mensaje + "\n";
         txtBitacora.appendText(linea);

@@ -1,13 +1,9 @@
-
 package ni.edu.uam.procesamiento_de_pedidos;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class PedidosController {
 
@@ -29,192 +25,140 @@ public class PedidosController {
     @FXML
     private TextArea txtRegistro;
 
-    private final AtomicInteger pedidosCompletados = new AtomicInteger(0);
-
+    // Estos campos solo se leen y modifican desde el hilo de JavaFX.
     private Thread hiloTrabajador;
-    private volatile boolean cancelacionSolicitada;
-    private volatile Exception errorProceso;
-    private boolean cierrePendiente;
+    private int pedidosCompletados;
+    private boolean cancelacionSolicitada;
+    private boolean cerrarAlTerminar;
 
-    // Restablece los controles al cargar el FXML, sin depender de una ventana.
+    // Deja la ventana en su estado inicial al cargar el FXML.
     @FXML
     private void initialize() {
         actualizarEstado("Listo");
-        actualizarProgreso(0);
+        actualizarProgreso();
         btnCancelar.setDisable(true);
     }
 
-    // Inicia una nueva simulación sin bloquear la interfaz JavaFX.
+    // Inicia una nueva ejecución con un hilo trabajador nuevo.
     @FXML
     private void iniciarProcesamiento() {
-        if (hiloTrabajador != null || cierrePendiente) return;
+        // Evita un inicio duplicado mientras el trabajador anterior no haya terminado.
+        if (hiloTrabajador != null) return;
 
-        pedidosCompletados.set(0);
+        pedidosCompletados = 0;
         cancelacionSolicitada = false;
-        errorProceso = null;
 
         txtRegistro.clear();
-        actualizarProgreso(0);
+        actualizarProgreso();
         actualizarEstado("En ejecución");
 
         btnIniciar.setDisable(true);
         btnCancelar.setDisable(false);
 
-        registrar("Iniciando procesamiento de 30 pedidos.");
+        registrar("Iniciando procesamiento de " + ProcesadorPedidos.TOTAL_PEDIDOS + " pedidos.");
 
-        // Cada ejecución utiliza un hilo trabajador nuevo.
-        Thread trabajador = new Thread(this::procesarPedidos, "ProcesadorPedidos");
+        // Un Thread terminado no puede volver a iniciarse, por eso cada ejecución crea uno nuevo.
+        Thread trabajador = new Thread(new ProcesadorPedidos(this), "trabajador-pedidos");
         hiloTrabajador = trabajador;
         trabajador.start();
 
-        // join() se ejecuta en otro hilo para no congelar JavaFX.
-        Thread vigilante = new Thread(() -> {
-            try {
-                trabajador.join();
-
-                // Los avisos de pedidos ya están encolados antes de este cierre.
-                Platform.runLater(() -> finalizarProcesamiento(trabajador));
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }, "VigilantePedidos");
-
-        vigilante.setDaemon(true);
+        // join() deja esperando al hilo que lo llama. Si se llamara aquí, la ventana se congelaría,
+        // por eso la espera se hace en un hilo vigilante aparte.
+        Thread vigilante = new Thread(() -> esperarTrabajador(trabajador), "vigilante-pedidos");
         vigilante.start();
     }
 
-    // Ejecuta los pedidos y captura interrupciones o errores inesperados.
-    private void procesarPedidos() {
-        ProcesadorPedidos procesador = new ProcesadorPedidos();
-
+    // Se ejecuta en el hilo vigilante: espera con join() a que el trabajador termine de verdad.
+    private void esperarTrabajador(Thread trabajador) {
         try {
-            procesador.procesarPedidos(this::registrarPedidoCompletado);
-
+            trabajador.join();
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-
-            if (!cancelacionSolicitada) errorProceso = e;
-
-        } catch (Exception e) {
-            errorProceso = e;
+            return;
         }
+
+        // Platform.runLater ejecuta las tareas en el orden en que se encolan,
+        // así que este cierre llega después de todos los pedidos ya registrados.
+        Platform.runLater(this::finalizarProcesamiento);
     }
 
-    // Contabiliza el pedido y actualiza la interfaz desde el hilo JavaFX.
-    private void registrarPedidoCompletado(int numeroPedido) {
-        int completados = pedidosCompletados.incrementAndGet();
-
-        // Los controles JavaFX solo deben actualizarse desde su propio hilo.
+    // Lo llama el trabajador al terminar cada pedido. La interfaz se actualiza en el hilo de JavaFX.
+    void registrarPedidoCompletado(int numeroPedido) {
         Platform.runLater(() -> {
-            actualizarProgreso(completados);
+            pedidosCompletados++;
+            actualizarProgreso();
             registrar("Pedido " + numeroPedido + " completado.");
         });
     }
 
-    // Solicita la cancelación sin detener forzosamente al trabajador.
+    // Solicita la cancelación cooperativa del trabajador, sin detenerlo a la fuerza.
     @FXML
     private void cancelarProcesamiento() {
         if (hiloTrabajador == null || cancelacionSolicitada) return;
 
         cancelacionSolicitada = true;
         actualizarEstado("Cancelando");
-
         btnCancelar.setDisable(true);
         registrar("Se solicitó cancelar el procesamiento.");
 
-        // Interrumpe la espera de sleep() si el trabajador está procesando.
+        // interrupt() despierta al trabajador si está en sleep() o lo detiene antes del siguiente pedido.
         hiloTrabajador.interrupt();
     }
 
-    // Confirma la terminación del trabajador antes de permitir otro inicio.
-    private void finalizarProcesamiento(Thread trabajador) {
-        if (hiloTrabajador != trabajador) return;
-
-        int completados = pedidosCompletados.get();
-        actualizarProgreso(completados);
-
-        if (errorProceso != null) {
-            actualizarEstado("Error");
-            registrar("Error durante el procesamiento: " + errorProceso);
-
-            if (!cierrePendiente) {
-                mostrarAlerta(
-                        Alert.AlertType.ERROR,
-                        "Error de procesamiento",
-                        "Ocurrió un error al procesar los pedidos:\n" + errorProceso
-                );
-            }
-
-        } else if (completados == ProcesadorPedidos.TOTAL_PEDIDOS) {
+    // Se ejecuta cuando el trabajador ya terminó: muestra el resultado y permite otra ejecución.
+    private void finalizarProcesamiento() {
+        if (pedidosCompletados == ProcesadorPedidos.TOTAL_PEDIDOS) {
             actualizarEstado("Completado");
-            registrar("Se completaron los 30 pedidos correctamente.");
-
+            registrar("Se completaron los " + ProcesadorPedidos.TOTAL_PEDIDOS + " pedidos.");
         } else if (cancelacionSolicitada) {
             actualizarEstado("Cancelado");
-            registrar("Procesamiento cancelado. Pedidos completados: " + completados);
-
+            registrar("Procesamiento cancelado. Pedidos completados: " + pedidosCompletados);
         } else {
+            // El trabajador terminó sin completar los pedidos y sin que se pidiera cancelar.
             actualizarEstado("Error");
-            registrar("El procesamiento terminó inesperadamente.");
-
-            if (!cierrePendiente) {
-                mostrarAlerta(
-                        Alert.AlertType.ERROR,
-                        "Procesamiento incompleto",
-                        "El trabajador terminó antes de completar los 30 pedidos."
-                );
-            }
+            registrar("El procesamiento terminó antes de completar los pedidos.");
+            if (!cerrarAlTerminar) mostrarError("El trabajador terminó antes de completar los pedidos.");
         }
 
         hiloTrabajador = null;
-
         btnIniciar.setDisable(false);
         btnCancelar.setDisable(true);
 
-        if (cierrePendiente) {
-            Stage ventana = (Stage) btnIniciar.getScene().getWindow();
-            ventana.close();
-        }
+        if (cerrarAlTerminar) btnIniciar.getScene().getWindow().hide();
     }
 
-    // Actualiza el contador y calcula el porcentaje de progreso.
-    private void actualizarProgreso(int completados) {
-        lblContador.setText(completados + " / " + ProcesadorPedidos.TOTAL_PEDIDOS);
+    // Si hay pedidos en proceso, cancela primero y cierra la ventana cuando el trabajador termine.
+    public void cerrarVentana(WindowEvent evento) {
+        if (hiloTrabajador == null) return;
 
-        double progreso = (double) completados / ProcesadorPedidos.TOTAL_PEDIDOS;
-        barraProgreso.setProgress(progreso);
+        // consume() evita que la ventana se cierre en este momento.
+        evento.consume();
+        cerrarAlTerminar = true;
+        cancelarProcesamiento();
     }
 
-    // Muestra el estado actual del procesamiento.
+    // Muestra el contador y la barra de progreso con los pedidos completados.
+    private void actualizarProgreso() {
+        lblContador.setText(pedidosCompletados + " / " + ProcesadorPedidos.TOTAL_PEDIDOS);
+        barraProgreso.setProgress((double) pedidosCompletados / ProcesadorPedidos.TOTAL_PEDIDOS);
+    }
+
+    // Muestra el estado actual de la aplicación.
     private void actualizarEstado(String estado) {
         lblEstado.setText(estado);
     }
 
-    // Agrega un mensaje al registro de operaciones.
+    // Agrega un mensaje al registro de procesamiento.
     private void registrar(String mensaje) {
         txtRegistro.appendText(mensaje + "\n");
     }
 
-    // Muestra una alerta con el tipo, título y mensaje indicados.
-    private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
-        Alert alerta = new Alert(tipo);
+    // Muestra una alerta de error sin detener el hilo de JavaFX.
+    private void mostrarError(String mensaje) {
+        Alert alerta = new Alert(Alert.AlertType.ERROR);
         alerta.initOwner(btnIniciar.getScene().getWindow());
-        alerta.setTitle(titulo);
+        alerta.setTitle("Error de procesamiento");
         alerta.setHeaderText(null);
         alerta.setContentText(mensaje);
-        // Evita un bucle de eventos anidado mientras se libera el trabajador.
         alerta.show();
-    }
-
-    // Cancela la tarea antes de cerrar la ventana, si todavía está activa.
-    void configurarCierre(Stage ventana) {
-        ventana.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST, evento -> {
-            if (hiloTrabajador == null) return;
-
-            evento.consume();
-            cierrePendiente = true;
-
-            cancelarProcesamiento();
-        });
     }
 }

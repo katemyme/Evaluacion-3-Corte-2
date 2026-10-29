@@ -8,7 +8,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class PedidosApplication extends Application {
-    // Instala el cierre seguro antes de que la ventana pueda recibir eventos.
+
+    // Carga la vista, conecta el cierre seguro con el controlador y muestra la ventana.
     @Override
     public void start(Stage ventana) throws IOException {
         FXMLLoader cargador = new FXMLLoader(PedidosApplication.class.getResource("pedidos-view.fxml"));
@@ -16,7 +17,7 @@ public class PedidosApplication extends Application {
         PedidosController controlador = cargador.getController();
         ventana.setTitle("Procesamiento de pedidos");
         ventana.setScene(escena);
-        controlador.configurarCierre(ventana);
+        ventana.setOnCloseRequest(controlador::cerrarVentana);
         ventana.show();
     }
 }

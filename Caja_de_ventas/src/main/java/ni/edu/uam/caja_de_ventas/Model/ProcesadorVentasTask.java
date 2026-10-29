@@ -4,6 +4,7 @@ import javafx.concurrent.Task;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 
+// Task es una clase de JavaFX para trabajo en segundo plano; permite cancelar y publicar progreso y mensajes de forma segura.
 public class ProcesadorVentasTask extends Task<Integer> {
 
     private final String nombreVendedor;
@@ -11,8 +12,10 @@ public class ProcesadorVentasTask extends Task<Integer> {
     private final CajaCompartida caja;
     private final Consumer<CajaCompartida.EstadoCaja> onVentaConfirmada;
     private final Consumer<Integer> onProgresoVendedor;
+    // volatile hace que el hilo de JavaFX vea el último valor escrito por el hilo del vendedor.
     private volatile int ventasRealizadas = 0;
 
+    // Recibe los datos del vendedor y las acciones que se ejecutan al confirmar cada venta.
     public ProcesadorVentasTask(String nombreVendedor, int metaVentas, CajaCompartida caja,
                         Consumer<CajaCompartida.EstadoCaja> onVentaConfirmada,
                         Consumer<Integer> onProgresoVendedor) {
@@ -26,6 +29,7 @@ public class ProcesadorVentasTask extends Task<Integer> {
         updateMessage("Inactivo");
     }
 
+    // Trabajo del vendedor en segundo plano: realiza sus ventas hasta terminar o ser cancelado.
     @Override
     protected Integer call() {
         updateMessage("Activo (Vendiendo...)");
@@ -56,10 +60,12 @@ public class ProcesadorVentasTask extends Task<Integer> {
         return ventasRealizadas;
     }
 
+    // Devuelve el nombre del vendedor.
     public String getNombreVendedor() {
         return nombreVendedor;
     }
 
+    // Devuelve las ventas confirmadas por este vendedor.
     public int getVentasRealizadas() {
         return ventasRealizadas;
     }

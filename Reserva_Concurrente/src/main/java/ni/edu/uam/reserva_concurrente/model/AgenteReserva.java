@@ -13,6 +13,7 @@ public class AgenteReserva implements Runnable {
     private int confirmadas;
     private int rechazadas;
 
+    // Recibe el número del agente, sus intentos, el inventario compartido y el controlador al que avisa.
     public AgenteReserva(int numero, int totalIntentos, Inventario inventario, ReservaController controlador) {
         this.numero = numero;
         this.totalIntentos = totalIntentos;
@@ -51,18 +52,22 @@ public class AgenteReserva implements Runnable {
         }
     }
 
+    // Devuelve el número del agente.
     public int getNumero() {
         return numero;
     }
 
+    // Devuelve la cantidad de intentos asignados al agente.
     public int getTotalIntentos() {
         return totalIntentos;
     }
 
+    // Devuelve las reservas confirmadas por el agente.
     public int getConfirmadas() {
         return confirmadas;
     }
 
+    // Devuelve las solicitudes rechazadas del agente.
     public int getRechazadas() {
         return rechazadas;
     }

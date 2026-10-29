@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class ReservaApplication extends Application {
+    // Carga y muestra la ventana de reserva de entradas.
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(ReservaApplication.class.getResource("reserva-view.fxml"));

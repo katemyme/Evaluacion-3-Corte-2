@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Caso 2 - Procesamiento de pedidos" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="ni.edu.uam.procesamiento_de_pedidos.Launcher" />
+    <module name="Procesamiento_de_pedidos" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

@@ -79,6 +79,7 @@ public class ReservaController {
     private boolean simulacionEnCurso = false;
     private int numeroSimulacion = 0;
 
+    // Agrupa en arreglos los controles de cada agente para actualizarlos por su número.
     @FXML
     private void initialize() {
         lblIntentosAgentes = new Label[] { lblIntentosA1, lblIntentosA2, lblIntentosA3 };

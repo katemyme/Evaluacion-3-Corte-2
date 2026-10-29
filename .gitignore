@@ -37,3 +37,9 @@ build/
 
 ### Mac OS ###
 .DS_Store
+### Proyectos de IntelliJ abiertos por módulo (no forman parte de la entrega) ###
+/*/.idea/
+
+### Respaldos editables y archivos temporales de Office (no forman parte de la entrega) ###
+informes/*.docx
+~$*

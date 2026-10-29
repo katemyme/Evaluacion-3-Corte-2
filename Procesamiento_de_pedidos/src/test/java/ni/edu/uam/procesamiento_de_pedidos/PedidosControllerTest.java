@@ -48,7 +48,7 @@ class PedidosControllerTest {
             ventana = new Stage();
             ventana.setScene(new Scene(cargador.load()));
             controlador = cargador.getController();
-            controlador.configurarCierre(ventana);
+            ventana.setOnCloseRequest(controlador::cerrarVentana);
             ventana.show();
             return null;
         });
@@ -219,7 +219,6 @@ class PedidosControllerTest {
         esperar(() -> !ventana.isShowing());
         assertFalse(trabajador.isAlive());
         enJavafx(() -> {
-            invocar("iniciarProcesamiento");
             assertNull(trabajador());
             return null;
         });

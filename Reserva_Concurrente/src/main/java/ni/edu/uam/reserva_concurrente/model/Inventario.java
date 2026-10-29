@@ -6,6 +6,7 @@ public class Inventario {
     private int confirmadas;
     private int rechazadas;
 
+    // Crea el inventario con todas las entradas disponibles.
     public Inventario(int totalEntradas) {
         this.totalEntradas = totalEntradas;
         this.disponibles = totalEntradas;
@@ -51,18 +52,22 @@ public class Inventario {
         rechazadas = 0;
     }
 
+    // Devuelve la cantidad inicial de entradas.
     public int getTotalEntradas() {
         return totalEntradas;
     }
 
+    // Devuelve las entradas disponibles.
     public synchronized int getDisponibles() {
         return disponibles;
     }
 
+    // Devuelve las reservas confirmadas.
     public synchronized int getConfirmadas() {
         return confirmadas;
     }
 
+    // Devuelve las solicitudes rechazadas.
     public synchronized int getRechazadas() {
         return rechazadas;
     }

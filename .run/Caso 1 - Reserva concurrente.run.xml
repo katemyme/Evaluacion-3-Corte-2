@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Caso 1 - Reserva concurrente" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="ni.edu.uam.reserva_concurrente.Launcher" />
+    <module name="Reserva_Concurrente" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
